@@ -99,18 +99,17 @@ Tween* Tween_CreateTween(Tween_Engine* engine, Tween_Props* props, Tween_Props* 
     memset(tween, 0, sizeof(Tween));
     
     tween->engine = engine;
-    tween->props = props;
-    tween->toProps = toProps;
+    
+    Tween_CopyProps(props, &tween->props);
+    Tween_CopyProps(toProps, &tween->toProps);
+
+    Tween_CopyProps(props, &tween->startProps);
+    Tween_CopyProps(props, &tween->repeatProps);
+
     tween->duration = duration;
     tween->easing = easing;
     tween->updateCallback = updateCallback;
     tween->data = data;
-    
-    tween->startProps = malloc(sizeof(Tween_Props));
-    memset(tween->startProps, 0, sizeof(Tween_Props));
-    
-    tween->repeatProps = malloc(sizeof(Tween_Props));
-    memset(tween->repeatProps, 0, sizeof(Tween_Props));
     
     return tween;
 }
@@ -157,9 +156,6 @@ void Tween_ChainTweens(Tween* tween, Tween* tween2) {
  */
 
 void Tween_DestroyTween(Tween* tween) {
-    free(tween->startProps);
-    free(tween->repeatProps);
-    
     Tween_Node* node = tween->chain;
     
     while (node) {
@@ -179,8 +175,7 @@ void Tween_StartTween(Tween* tween, uint32_t time) {
     tween->startTime = time;
     tween->startTime += tween->delay;
     
-    Tween_CopyProps(tween->props, tween->startProps);
-    Tween_CopyProps(tween->props, tween->repeatProps);
+    Tween_CopyProps(&tween->startProps, &tween->props);
     
     Tween_Node* node = (Tween_Node*) malloc(sizeof(Tween_Node));
     memset(node, 0, sizeof(Tween_Node));
@@ -246,7 +241,7 @@ bool Tween_UpdateTween(Tween* tween, uint32_t time) {
     float elapsed = (float)(time - tween->startTime) / (float)tween->duration;
     elapsed = (elapsed > 1) ? 1 : elapsed;
     
-    Tween_UpdateProps(tween->startProps, tween->toProps, tween->props, tweenEasingFuncs[tween->easing](elapsed));
+    Tween_UpdateProps(&tween->startProps, &tween->toProps, &tween->props, tweenEasingFuncs[tween->easing](elapsed));
     
     if (tween->updateCallback) {
         tween->updateCallback(tween);
@@ -257,29 +252,25 @@ bool Tween_UpdateTween(Tween* tween, uint32_t time) {
             tween->repeat--;
             
             if (tween->yoyo) {
-                Tween_Props* tempProps = tween->repeatProps;
-                tween->repeatProps = tween->toProps;
-                tween->toProps = tempProps;
-                
+                Tween_SwapProps(&tween->repeatProps, &tween->toProps);
                 tween->reversed = !tween->reversed;
             }
             
-            Tween_CopyProps(tween->repeatProps, tween->startProps);
+            Tween_CopyProps(&tween->repeatProps, &tween->startProps);
             tween->startTime = time + tween->delay;
             
             return true;
         }
         else {
-            
-            if (tween->completeCallback) {
-                tween->completeCallback(tween);
-            }
-            
             Tween_Node* node = tween->chain;
             
             while (node) {
                 Tween_StartTween(node->tween, time);
                 node = node->next;
+            }
+            
+            if (tween->completeCallback) {
+                tween->completeCallback(tween);
             }
             
             return false;

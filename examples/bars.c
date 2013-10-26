@@ -25,60 +25,72 @@
  */
 
 #include <SDL.h>
+#include <time.h>  
 #include "libtween/tween.h"
 
-SDL_Rect gRect01[1000];
-Tween_Props gProps01[1000];
+typedef struct Bar {
+    SDL_Rect rect;
+    uint8_t r;
+    uint8_t g;
+    uint8_t b;
+} Bar;
 
-Tween_Props gPropsTo01[1000];
-Tween* tween[1000];
-
-Tween_Props gPropsBack01[1000];
-Tween* tweenBack[1000];
+float rand_range(float min, float max) {
+    return min + ((float)rand() / ((float)RAND_MAX / (max - min)));
+}
 
 void update(Tween* tween) {
-    SDL_Rect* rect = (SDL_Rect*)tween->data;
-    rect->x = tween->props->x;
+    Bar* bar = (Bar*)tween->data; 
+    bar->rect.x = tween->props.x;
 }
 
 int main(int argc, char* argv[]) {
+    SDL_Window* window;
+    SDL_Renderer* renderer;
+    Tween_Engine* engine;
+    int loop;
+    float startValue;
+    float endValue;
+    Bar bar[1000];
+    Tween_Props props;
+    Tween_Props propsTo;
+    Tween* tween[1000];
+    Tween* tweenBack[1000];
+    int terminate;
+    uint32_t tick;
+    SDL_Event event;
+
+    srand(time(NULL));
+
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER);
     
-    SDL_Window* window = SDL_CreateWindow("Window", 0, 25, 1024, 1000, SDL_WINDOW_SHOWN );
-    SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED );
+    window = SDL_CreateWindow("Window", 0, 25, 1024, 1000, SDL_WINDOW_SHOWN);
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
-    SDL_Surface* surface = SDL_CreateRGBSurface(0, 100, 2, 32, 0, 0, 0, 0);
-    SDL_FillRect(surface, NULL, SDL_MapRGB(surface->format, 160, 221, 233)); 
-    SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
-    SDL_free(surface);
-
-    Tween_Engine* engine = Tween_CreateEngine();
-
-    int loop;
+    engine = Tween_CreateEngine();
 
     for (loop = 0; loop < 1000; loop++) {
-        float startValue = 500 + (((float)rand()/(float)RAND_MAX) - ((float)rand()/(float)RAND_MAX)) * 250;
-        float endValue = 500 + (((float)rand()/(float)RAND_MAX) - ((float)rand()/(float)RAND_MAX)) * 250;
-        
-        gRect01[loop].x = startValue;
-        gRect01[loop].y = loop;
-        gRect01[loop].w = 100;
-        gRect01[loop].h = 2;
-    
-        gProps01[loop].x = startValue;
-        gPropsTo01[loop].x = endValue;
-        
-        tween[loop] = Tween_CreateTween(engine, &gProps01[loop], &gPropsTo01[loop], 4000, 
-           TWEEN_EASING_LINEAR, update, NULL);
-        tween[loop]->delay = (((float)rand()/(float)RAND_MAX) * 1000);
-        tween[loop]->data = &(gRect01[loop]);
-        
-        gPropsBack01[loop].x = startValue;
+        startValue = 500 + (rand_range(0, 1) - rand_range(0, 1)) * 250;
+        endValue = 500 + (rand_range(0, 1) - rand_range(0, 1)) * 250;
+       
+        bar[loop].rect.x = startValue;
+        bar[loop].rect.y = loop;
+        bar[loop].rect.w = 100;
+        bar[loop].rect.h = 2;
 
-        tweenBack[loop] = Tween_CreateTween(engine, &gProps01[loop], &gPropsBack01[loop], 4000, 
-           TWEEN_EASING_ELASTIC_IN_OUT, update, NULL);
-        tweenBack[loop]->delay = (((float)rand()/(float)RAND_MAX) * 1000);
-        tweenBack[loop]->data = &gRect01[loop];
+        bar[loop].r = rand_range(0, 255);
+        bar[loop].g = rand_range(0, 255);
+        bar[loop].b = rand_range(0, 255);
+
+        props.x = startValue;
+
+        tween[loop] = Tween_CreateTween(engine, &props, &propsTo, 4000, TWEEN_EASING_LINEAR, update, &bar[loop]);
+        tween[loop]->delay = rand_range(0, 1000);
+
+        propsTo.x = endValue;
+       
+        tweenBack[loop] = Tween_CreateTween(engine, &propsTo, &props, 4000, TWEEN_EASING_ELASTIC_IN_OUT, update, &bar[loop]);
+        tweenBack[loop]->delay = rand_range(0, 1000);
         
         Tween_ChainTweens(tween[loop], tweenBack[loop]);
         Tween_ChainTweens(tweenBack[loop], tween[loop]);
@@ -86,16 +98,19 @@ int main(int argc, char* argv[]) {
         Tween_StartTween(tween[loop], SDL_GetTicks());
     }
 
-    int terminate = 0;
-    
+    terminate = 0;
+ 
     while(!terminate) {
-        uint32_t tick = SDL_GetTicks();
+        tick = SDL_GetTicks();
         Tween_UpdateEngine(engine, tick);
         
-        SDL_Event event;
         SDL_PollEvent(&event);
         
         switch (event.type) {
+            case SDL_QUIT:
+               terminate = 1;
+               break;
+ 
             case SDL_KEYDOWN:
                 switch (event.key.keysym.sym) {
                     case SDLK_ESCAPE:
@@ -109,20 +124,22 @@ int main(int argc, char* argv[]) {
         SDL_RenderClear(renderer);
 
         for (loop = 0; loop < 1000; loop++) {
-           SDL_RenderCopyEx(renderer, texture, NULL, &gRect01[loop], 0, 0, SDL_FLIP_NONE);
+            SDL_SetRenderDrawColor(renderer, bar[loop].r, bar[loop].g, bar[loop].b, 0xFF);
+            SDL_RenderFillRect(renderer, &bar[loop].rect);
         }
         
         SDL_RenderPresent(renderer);
+
+        SDL_Delay(1);
     }
 
     for (loop = 0; loop < 1000; loop++) {
-       Tween_DestroyTween(tween[loop]);
-       Tween_DestroyTween(tweenBack[loop]);
+        Tween_DestroyTween(tween[loop]);
+        Tween_DestroyTween(tweenBack[loop]);
     }
     
     Tween_DestroyEngine(engine);
     
-    SDL_DestroyTexture(texture);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     

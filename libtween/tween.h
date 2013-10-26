@@ -39,7 +39,6 @@ typedef struct Tween_Node {
 
 typedef struct Tween_Engine {
     Tween_Node* tweens;
-    uint32_t (*timerFunction)(void);
 } Tween_Engine;
 
 typedef struct Tween_Props {
@@ -58,8 +57,8 @@ typedef void (*Tween_Callback)(struct Tween*);
 
 typedef struct Tween {
     Tween_Engine* engine;
-    Tween_Props* props;
-    Tween_Props* toProps;
+    Tween_Props props;
+    Tween_Props toProps;
     uint32_t duration;
     uint32_t delay;
     int repeat;
@@ -71,8 +70,8 @@ typedef struct Tween {
     void* data;
     uint32_t startTime;
     bool startCallbackFired;
-    Tween_Props* startProps;
-    Tween_Props* repeatProps;
+    Tween_Props startProps;
+    Tween_Props repeatProps;
     bool reversed;
     Tween_Node* chain;
 } Tween;
@@ -141,6 +140,17 @@ static __inline__ void Tween_CopyProps(Tween_Props* props, Tween_Props* props2) 
     props2->g = props->g;
     props2->b = props->b;
     props2->a = props->a;
+}
+
+/**
+ * Tween_SwapProps()
+ */
+
+static __inline__ void Tween_SwapProps(Tween_Props* props, Tween_Props* props2) {
+    Tween_Props tempProps;
+    Tween_CopyProps(props, &tempProps);
+    Tween_CopyProps(props2, props);
+    Tween_CopyProps(&tempProps, props2);
 }
 
 /**

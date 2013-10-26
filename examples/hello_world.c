@@ -27,60 +27,77 @@
 #include <SDL.h>
 #include "libtween/tween.h"
 
-SDL_Rect gRect;
-int gRotation;
+typedef struct Square {
+    SDL_Rect rect;
+    int rotation;
+} Square;
 
 void update(Tween* tween) {
-    gRect.x = tween->props->x;
-    gRect.y = tween->props->y;
-    gRotation = tween->props->rotation;
+    Square* square = (Square*)tween->data;
+    square->rect.x = tween->props.x;
+    square->rect.y = tween->props.y;
+    square->rotation = tween->props.rotation;
 }
 
 int main(int argc, char* argv[]) {
+    SDL_Window* window;
+    SDL_Renderer* renderer;
+    SDL_Surface* surface;
+    SDL_Texture* texture;
+    Square square;
+    Tween_Engine* engine;
+    Tween_Props props;
+    Tween_Props toProps;
+    Tween* tween;
+    Tween* tweenBack;
+    int terminate;
+    uint32_t tick;
+    SDL_Event event;
+
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER);
     
-    SDL_Window* window = SDL_CreateWindow("Window", 0, 25, 1024, 768, SDL_WINDOW_SHOWN );
-    SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED );
+    window = SDL_CreateWindow("Window", 0, 25, 1024, 768, SDL_WINDOW_SHOWN);
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
-    SDL_Surface* surface = SDL_CreateRGBSurface(0, 100, 100, 32, 0, 0, 0, 0);
+    surface = SDL_CreateRGBSurface(0, 100, 100, 32, 0, 0, 0, 0);
     SDL_FillRect(surface, NULL, SDL_MapRGB(surface->format, 160, 221, 233)); 
-    SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
-    SDL_free(surface);
+    texture = SDL_CreateTextureFromSurface(renderer, surface);
+    SDL_FreeSurface(surface);
 
-    gRect.x = 100;
-    gRect.y = 100;
-    gRect.w = 125;
-    gRect.h = 125;
-    gRotation = 0;
-    
-    Tween_Engine* engine = Tween_CreateEngine();
+    square.rect.x = 100;  
+    square.rect.y = 100;
+    square.rect.w = 125;
+    square.rect.h = 125;
+    square.rotation = 0;
+
+    engine = Tween_CreateEngine();
    
-    Tween_Props props = Tween_MakeProps(gRect.x, gRect.y, gRect.w, gRect.h, gRotation);
+    props = Tween_MakeProps(square.rect.x, square.rect.y, square.rect.w, square.rect.h, square.rotation);
+    toProps = Tween_MakeProps(700, 200, 0, 0, 359);
 
-    Tween_Props toProps = Tween_MakeProps(700, 200, 0, 0, 359);
-    Tween* tween = Tween_CreateTween(engine, &props, &toProps, 2000,
-       TWEEN_EASING_ELASTIC_IN_OUT, update, NULL);
+    tween = Tween_CreateTween(engine, &props, &toProps, 2000, TWEEN_EASING_ELASTIC_IN_OUT, update, &square);
     tween->delay = 1000;
     
-    Tween_Props toBackProps = Tween_MakeProps(gRect.x, gRect.y, 0, 0, gRotation);
-    Tween* tweenBack = Tween_CreateTween(engine, &props, &toBackProps, 3000, 
-       TWEEN_EASING_ELASTIC_IN_OUT, update, NULL);
+    tweenBack = Tween_CreateTween(engine, &toProps, &props, 3000, TWEEN_EASING_ELASTIC_IN_OUT, update, &square);
     
     Tween_ChainTweens(tween, tweenBack);
     Tween_ChainTweens(tweenBack, tween);
     
     Tween_StartTween(tween, SDL_GetTicks());
     
-    int terminate = 0;
+    terminate = 0;
     
     while(!terminate) {
-        uint32_t tick = SDL_GetTicks();
+        tick = SDL_GetTicks();
         Tween_UpdateEngine(engine, tick);
         
-        SDL_Event event;
         SDL_PollEvent(&event);
         
         switch (event.type) {
+            case SDL_QUIT:
+                terminate = 1;
+                break;
+                
             case SDL_KEYDOWN:
                 switch (event.key.keysym.sym) {
                     case SDLK_ESCAPE:
@@ -92,9 +109,11 @@ int main(int argc, char* argv[]) {
         
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
         SDL_RenderClear(renderer);
-        SDL_RenderCopyEx(renderer, texture, NULL, &gRect, gRotation, 0, SDL_FLIP_NONE);
+        SDL_RenderCopyEx(renderer, texture, NULL, &square.rect, square.rotation, 0, SDL_FLIP_NONE);
         
         SDL_RenderPresent(renderer);
+
+        SDL_Delay(1);
     }
     
     Tween_DestroyTween(tween);

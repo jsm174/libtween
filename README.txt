@@ -1,11 +1,11 @@
-libtween 0.1
+libtween 0.2
 ------------
 
 *** What is libtween?
 
 libtween is a tweening engine written in C. 
 
-It is a port of "Javascript Tweening Engine" by @sole at:
+It is a port of "Javascript Tweening Engine" by @sole and others at:
 
    https://github.com/sole/tween.js
 
