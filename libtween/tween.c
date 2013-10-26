@@ -94,7 +94,7 @@ bool Tween_UpdateEngine(Tween_Engine* engine, uint32_t time) {
  * Tween_CreateTween()
  */
 
-Tween* Tween_CreateTween(Tween_Engine* engine, Tween_Props* props, Tween_Props* toProps, uint32_t duration, TweenEasing easing, Tween_Callback updateCallback, void* data) {
+Tween* Tween_CreateTween(Tween_Engine* engine, Tween_Props* props, Tween_Props* toProps, uint32_t duration, Tween_Easing easing, Tween_Callback updateCallback, void* data) {
     Tween* tween = (Tween*) malloc(sizeof(Tween));
     memset(tween, 0, sizeof(Tween));
     
@@ -119,7 +119,7 @@ Tween* Tween_CreateTween(Tween_Engine* engine, Tween_Props* props, Tween_Props* 
  * Tween_CreateTweenEx()
  */
 
-Tween* Tween_CreateTweenEx(Tween_Engine* engine, Tween_Props* props, Tween_Props* toProps, uint32_t duration, uint32_t delay, int repeat, bool yoyo, TweenEasing easing, Tween_Callback startCallback, Tween_Callback updateCallback, Tween_Callback completeCallback, void* data) {
+Tween* Tween_CreateTweenEx(Tween_Engine* engine, Tween_Props* props, Tween_Props* toProps, uint32_t duration, uint32_t delay, int repeat, bool yoyo, Tween_Easing easing, Tween_Callback startCallback, Tween_Callback updateCallback, Tween_Callback completeCallback, void* data) {
     Tween* tween = Tween_CreateTween(engine, props, toProps, duration, easing, updateCallback, data);
     
     tween->delay = delay;

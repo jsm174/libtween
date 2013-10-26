@@ -64,7 +64,7 @@ typedef struct Tween {
     uint32_t delay;
     int repeat;
     bool yoyo;
-    TweenEasing easing;
+    Tween_Easing easing;
     Tween_Callback startCallback;
     Tween_Callback updateCallback;
     Tween_Callback completeCallback;
@@ -81,8 +81,8 @@ Tween_Engine* Tween_CreateEngine();
 bool Tween_UpdateEngine(Tween_Engine* engine, uint32_t time);
 void Tween_DestroyEngine(Tween_Engine* engine);
 
-Tween* Tween_CreateTween(Tween_Engine* engine, Tween_Props* props, Tween_Props* toProps, uint32_t duration, TweenEasing easing, Tween_Callback updateCallback, void* data);
-Tween* Tween_CreateTweenEx(Tween_Engine* engine, Tween_Props* props, Tween_Props* toProps, uint32_t duration, uint32_t delay, int repeat, bool yoyo, TweenEasing easing, Tween_Callback startCallback, Tween_Callback updateCallback, Tween_Callback completeCallback, void* data);
+Tween* Tween_CreateTween(Tween_Engine* engine, Tween_Props* props, Tween_Props* toProps, uint32_t duration, Tween_Easing easing, Tween_Callback updateCallback, void* data);
+Tween* Tween_CreateTweenEx(Tween_Engine* engine, Tween_Props* props, Tween_Props* toProps, uint32_t duration, uint32_t delay, int repeat, bool yoyo, Tween_Easing easing, Tween_Callback startCallback, Tween_Callback updateCallback, Tween_Callback completeCallback, void* data);
 void Tween_ChainTweens(Tween* tween, Tween* tween2);
 void Tween_StartTween(Tween* tween, uint32_t time);
 bool Tween_UpdateTween(Tween* tween, uint32_t time);

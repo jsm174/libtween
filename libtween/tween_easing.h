@@ -59,7 +59,7 @@ typedef enum {
     TWEEN_EASING_BOUNCE_IN,
     TWEEN_EASING_BOUNCE_OUT,
     TWEEN_EASING_BOUNCE_IN_OUT,
-} TweenEasing;
+} Tween_Easing;
 
 typedef float (*Tween_Easing_Func)(float);
 extern Tween_Easing_Func tweenEasingFuncs[];
