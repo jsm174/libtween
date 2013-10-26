@@ -53,7 +53,7 @@ int main(int argc, char* argv[]) {
     float endValue;
     Bar bar[1000];
     Tween_Props props;
-    Tween_Props propsTo;
+    Tween_Props toProps;
     Tween* tween[1000];
     Tween* tweenBack[1000];
     int terminate;
@@ -83,13 +83,12 @@ int main(int argc, char* argv[]) {
         bar[loop].b = rand_range(0, 255);
 
         props.x = startValue;
+        toProps.x = endValue;
 
-        tween[loop] = Tween_CreateTween(engine, &props, &propsTo, 4000, TWEEN_EASING_LINEAR, update, &bar[loop]);
+        tween[loop] = Tween_CreateTween(engine, &props, &toProps, 4000, TWEEN_EASING_LINEAR, update, &bar[loop]);
         tween[loop]->delay = rand_range(0, 1000);
-
-        propsTo.x = endValue;
        
-        tweenBack[loop] = Tween_CreateTween(engine, &propsTo, &props, 4000, TWEEN_EASING_ELASTIC_IN_OUT, update, &bar[loop]);
+        tweenBack[loop] = Tween_CreateTween(engine, &toProps, &props, 4000, TWEEN_EASING_ELASTIC_IN_OUT, update, &bar[loop]);
         tweenBack[loop]->delay = rand_range(0, 1000);
         
         Tween_ChainTweens(tween[loop], tweenBack[loop]);
