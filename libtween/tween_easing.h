@@ -2,7 +2,7 @@
  * libtween
  * Copyright (C) 2013 libtween authors.
  * 
- * Based on tween.js Copyright (c) 2010-2012 Tween.js authors.
+ * Based on tween.js Copyright (c) 2010-2013 Tween.js authors.
  * Easing equations Copyright (c) 2001 Robert Penner http://robertpenner.com/easing/
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -26,6 +26,10 @@
 
 #ifndef __TWEEN_EASING_H
 #define __TWEEN_EASING_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef enum {
     TWEEN_EASING_LINEAR,
@@ -61,7 +65,11 @@ typedef enum {
     TWEEN_EASING_BOUNCE_IN_OUT,
 } Tween_Easing;
 
-typedef float (*Tween_Easing_Func)(float);
+typedef double (*Tween_Easing_Func)(double);
 extern Tween_Easing_Func tweenEasingFuncs[];
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

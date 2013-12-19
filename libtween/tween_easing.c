@@ -33,37 +33,37 @@
  * prototypes
  */
 
-float Tween_LinearEasing(float);
-float Tween_QuadraticInEasing(float);
-float Tween_QuadraticOutEasing(float);
-float Tween_QuadraticInOutEasing(float);
-float Tween_CubicInEasing(float);
-float Tween_CubicOutEasing(float);
-float Tween_CubicInOutEasing(float);
-float Tween_QuarticInEasing(float);
-float Tween_QuarticOutEasing(float);
-float Tween_QuarticInOutEasing(float);
-float Tween_QuinticInEasing(float);
-float Tween_QuinticOutEasing(float);
-float Tween_QuinticInOutEasing(float);
-float Tween_SinusoidalInEasing(float);
-float Tween_SinusoidalOutEasing(float);
-float Tween_SinusoidalInOutEasing(float);
-float Tween_ExponentialInEasing(float);
-float Tween_ExponentialOutEasing(float);
-float Tween_ExponentialInOutEasing(float);
-float Tween_CircularInEasing(float);
-float Tween_CircularOutEasing(float);
-float Tween_CircularInOutEasing(float);
-float Tween_ElasticInEasing(float);
-float Tween_ElasticOutEasing(float);
-float Tween_ElasticInOutEasing(float);
-float Tween_BackInEasing(float);
-float Tween_BackOutEasing(float);
-float Tween_BackInOutEasing(float);
-float Tween_BounceInEasing(float);
-float Tween_BounceOutEasing(float);
-float Tween_BounceInOutEasing(float);
+double Tween_LinearEasing(double);
+double Tween_QuadraticInEasing(double);
+double Tween_QuadraticOutEasing(double);
+double Tween_QuadraticInOutEasing(double);
+double Tween_CubicInEasing(double);
+double Tween_CubicOutEasing(double);
+double Tween_CubicInOutEasing(double);
+double Tween_QuarticInEasing(double);
+double Tween_QuarticOutEasing(double);
+double Tween_QuarticInOutEasing(double);
+double Tween_QuinticInEasing(double);
+double Tween_QuinticOutEasing(double);
+double Tween_QuinticInOutEasing(double);
+double Tween_SinusoidalInEasing(double);
+double Tween_SinusoidalOutEasing(double);
+double Tween_SinusoidalInOutEasing(double);
+double Tween_ExponentialInEasing(double);
+double Tween_ExponentialOutEasing(double);
+double Tween_ExponentialInOutEasing(double);
+double Tween_CircularInEasing(double);
+double Tween_CircularOutEasing(double);
+double Tween_CircularInOutEasing(double);
+double Tween_ElasticInEasing(double);
+double Tween_ElasticOutEasing(double);
+double Tween_ElasticInOutEasing(double);
+double Tween_BackInEasing(double);
+double Tween_BackOutEasing(double);
+double Tween_BackInOutEasing(double);
+double Tween_BounceInEasing(double);
+double Tween_BounceOutEasing(double);
+double Tween_BounceInOutEasing(double);
 
 /**
  * easing function pointers array
@@ -107,7 +107,7 @@ Tween_Easing_Func tweenEasingFuncs[] = {
  * Tween_LinearEasing()
  */
 
-float Tween_LinearEasing(float k) {
+double Tween_LinearEasing(double k) {
     return k;
 }
 
@@ -115,7 +115,7 @@ float Tween_LinearEasing(float k) {
  * Tween_QuadraticInEasing()
  */
 
-float Tween_QuadraticInEasing(float k) {
+double Tween_QuadraticInEasing(double k) {
     return k * k;
 }
 
@@ -123,7 +123,7 @@ float Tween_QuadraticInEasing(float k) {
  * Tween_QuadraticOutEasing()
  */
 
-float Tween_QuadraticOutEasing(float k) {
+double Tween_QuadraticOutEasing(double k) {
     return k * ( 2 - k );
 }
 
@@ -131,7 +131,7 @@ float Tween_QuadraticOutEasing(float k) {
  * Tween_QuadraticInOutEasing()
  */
 
-float Tween_QuadraticInOutEasing(float k) {
+double Tween_QuadraticInOutEasing(double k) {
     k *= 2;
     
     if ( k < 1 ) {
@@ -147,7 +147,7 @@ float Tween_QuadraticInOutEasing(float k) {
  * Tween_CubicInEasing()
  */
 
-float Tween_CubicInEasing(float k) {
+double Tween_CubicInEasing(double k) {
     return k * k * k;
 }
 
@@ -155,7 +155,7 @@ float Tween_CubicInEasing(float k) {
  * Tween_CubicOutEasing()
  */
 
-float Tween_CubicOutEasing(float k) {
+double Tween_CubicOutEasing(double k) {
     --k;
     
     return k * k * k + 1;
@@ -165,7 +165,7 @@ float Tween_CubicOutEasing(float k) {
  * Tween_CubicInOutEasing()
  */
 
-float Tween_CubicInOutEasing(float k) {
+double Tween_CubicInOutEasing(double k) {
     k *= 2;
     
     if ( k < 1 ) {
@@ -181,7 +181,7 @@ float Tween_CubicInOutEasing(float k) {
  * Tween_QuarticInEasing()
  */
 
-float Tween_QuarticInEasing(float k) {
+double Tween_QuarticInEasing(double k) {
     return k * k * k * k;
 }
 
@@ -189,7 +189,7 @@ float Tween_QuarticInEasing(float k) {
  * Tween_QuarticOutEasing()
  */
 
-float Tween_QuarticOutEasing(float k) {
+double Tween_QuarticOutEasing(double k) {
     --k;
     
     return 1 - ( k * k * k * k );
@@ -199,7 +199,7 @@ float Tween_QuarticOutEasing(float k) {
  * Tween_QuarticInOutEasing()
  */
 
-float Tween_QuarticInOutEasing(float k) {
+double Tween_QuarticInOutEasing(double k) {
     k *= 2;
     
     if ( k < 1 ) {
@@ -215,7 +215,7 @@ float Tween_QuarticInOutEasing(float k) {
  * Tween_QuinticInEasing()
  */
 
-float Tween_QuinticInEasing(float k) {
+double Tween_QuinticInEasing(double k) {
     return k * k * k * k * k;
 }
 
@@ -223,7 +223,7 @@ float Tween_QuinticInEasing(float k) {
  * Tween_QuinticOutEasing()
  */
 
-float Tween_QuinticOutEasing(float k) {
+double Tween_QuinticOutEasing(double k) {
     --k;
     
     return k * k * k * k * k + 1;
@@ -233,7 +233,7 @@ float Tween_QuinticOutEasing(float k) {
  * Tween_QuinticInOutEasing()
  */
 
-float Tween_QuinticInOutEasing(float k) {
+double Tween_QuinticInOutEasing(double k) {
     k *= 2;
     
     if ( k < 1 ) {
@@ -249,7 +249,7 @@ float Tween_QuinticInOutEasing(float k) {
  * Tween_SinusoidalInEasing()
  */
 
-float Tween_SinusoidalInEasing(float k) {
+double Tween_SinusoidalInEasing(double k) {
     return 1 - cos( k * PI / 2 );
 }
 
@@ -257,7 +257,7 @@ float Tween_SinusoidalInEasing(float k) {
  * Tween_SinusoidalOutEasing()
  */
 
-float Tween_SinusoidalOutEasing(float k) {
+double Tween_SinusoidalOutEasing(double k) {
     return sin( k * PI / 2 );
 }
 
@@ -265,7 +265,7 @@ float Tween_SinusoidalOutEasing(float k) {
  * Tween_SinusoidalInOutEasing()
  */
 
-float Tween_SinusoidalInOutEasing(float k) {
+double Tween_SinusoidalInOutEasing(double k) {
     return 0.5 * ( 1 - cos( PI * k ) );
 }
 
@@ -273,7 +273,7 @@ float Tween_SinusoidalInOutEasing(float k) {
  * Tween_ExponentialInEasing()
  */
 
-float Tween_ExponentialInEasing(float k) {
+double Tween_ExponentialInEasing(double k) {
     return k == 0 ? 0 : pow( 1024, k - 1 );
 }
 
@@ -281,7 +281,7 @@ float Tween_ExponentialInEasing(float k) {
  * Tween_ExponentialOutEasing()
  */
 
-float Tween_ExponentialOutEasing(float k) {
+double Tween_ExponentialOutEasing(double k) {
     return k == 1 ? 1 : 1 - pow( 2, - 10 * k );
 }
 
@@ -289,7 +289,7 @@ float Tween_ExponentialOutEasing(float k) {
  * Tween_ExponentialInOutEasing()
  */
 
-float Tween_ExponentialInOutEasing(float k) {
+double Tween_ExponentialInOutEasing(double k) {
     if ( k == 0 ) {
         return 0;
     }
@@ -311,7 +311,7 @@ float Tween_ExponentialInOutEasing(float k) {
  * Tween_CircularInEasing()
  */
 
-float Tween_CircularInEasing(float k) {
+double Tween_CircularInEasing(double k) {
     return 1 - sqrt( 1 - k * k );
 
 }
@@ -320,7 +320,7 @@ float Tween_CircularInEasing(float k) {
  * Tween_CircularOutEasing()
  */
 
-float Tween_CircularOutEasing(float k) {
+double Tween_CircularOutEasing(double k) {
     --k;
     
     return sqrt( 1 - ( k * k ) );
@@ -330,7 +330,7 @@ float Tween_CircularOutEasing(float k) {
  * Tween_CircularInOutEasing()
  */
 
-float Tween_CircularInOutEasing(float k) {
+double Tween_CircularInOutEasing(double k) {
     k *= 2;
     
     if ( k < 1 ) {
@@ -346,10 +346,10 @@ float Tween_CircularInOutEasing(float k) {
  * Tween_ElasticInEasing()
  */
 
-float Tween_ElasticInEasing(float k) {
-    float s;
-    float a = 0.1;
-    float p = 0.4;
+double Tween_ElasticInEasing(double k) {
+    double s;
+    double a = 0.1;
+    double p = 0.4;
     
     if ( k == 0 ) {
         return 0;
@@ -376,10 +376,10 @@ float Tween_ElasticInEasing(float k) {
  * Tween_ElasticOutEasing()
  */
 
-float Tween_ElasticOutEasing(float k) {
-    float s;
-    float a = 0.1;
-    float p = 0.4;
+double Tween_ElasticOutEasing(double k) {
+    double s;
+    double a = 0.1;
+    double p = 0.4;
     
     if ( k == 0 ) {
         return 0;
@@ -404,10 +404,10 @@ float Tween_ElasticOutEasing(float k) {
  * Tween_ElasticInOutEasing()
  */
 
-float Tween_ElasticInOutEasing(float k) {
-    float s;
-    float a = 0.1;
-    float p = 0.4;
+double Tween_ElasticInOutEasing(double k) {
+    double s;
+    double a = 0.1;
+    double p = 0.4;
     
     if ( k == 0 ) {
         return 0;
@@ -442,8 +442,8 @@ float Tween_ElasticInOutEasing(float k) {
  * Tween_BackInEasing()
  */
 
-float Tween_BackInEasing(float k) {
-    float s = 1.70158;
+double Tween_BackInEasing(double k) {
+    double s = 1.70158;
     return k * k * ( ( s + 1 ) * k - s );
 }
 
@@ -451,8 +451,8 @@ float Tween_BackInEasing(float k) {
  * Tween_BackOutEasing()
  */
 
-float Tween_BackOutEasing(float k) {
-    float s = 1.70158;
+double Tween_BackOutEasing(double k) {
+    double s = 1.70158;
     
     --k;
     
@@ -463,8 +463,8 @@ float Tween_BackOutEasing(float k) {
  * Tween_BackInOutEasing()
  */
 
-float Tween_BackInOutEasing(float k) {
-    float s = 1.70158 * 1.525;
+double Tween_BackInOutEasing(double k) {
+    double s = 1.70158 * 1.525;
     
     k *= 2;
     
@@ -481,7 +481,7 @@ float Tween_BackInOutEasing(float k) {
  * Tween_BounceInEasing()
  */
 
-float Tween_BounceInEasing(float k) {
+double Tween_BounceInEasing(double k) {
     return 1 - Tween_BounceOutEasing( 1 - k );
 }
 
@@ -489,7 +489,7 @@ float Tween_BounceInEasing(float k) {
  * Tween_BounceOutEasing()
  */
 
-float Tween_BounceOutEasing(float k) {
+double Tween_BounceOutEasing(double k) {
     if ( k < ( 1 / 2.75 ) ) {
         return 7.5625 * k * k;
     }
@@ -513,7 +513,7 @@ float Tween_BounceOutEasing(float k) {
  * Tween_BounceInOutEasing()
  */
 
-float Tween_BounceInOutEasing(float k) {
+double Tween_BounceInOutEasing(double k) {
     if ( k < 0.5 ) {
         return Tween_BounceInEasing( k * 2 ) * 0.5;
     }

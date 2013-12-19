@@ -2,7 +2,7 @@
  * libtween
  * Copyright (C) 2013 libtween authors.
  * 
- * Based on tween.js Copyright (c) 2010-2012 Tween.js authors.
+ * Based on tween.js Copyright (c) 2010-2013 Tween.js authors.
  * Easing equations Copyright (c) 2001 Robert Penner http://robertpenner.com/easing/
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -28,9 +28,38 @@
 #define __TWEEN_H
 
 #include <stdint.h>
-#include <stdbool.h>
 
 #include "tween_easing.h"
+
+#ifndef TWEEN_INLINE
+#if defined(__GNUC__)
+#define TWEEN_INLINE __inline__
+#elif defined(_MSC_VER)
+#define TWEEN_INLINE __inline
+#ifndef __inline__
+#define __inline__ __inline
+#endif
+#else
+#define TWEEN_INLINE inline
+#ifndef __inline__
+#define __inline__ inline
+#endif
+#endif
+#endif
+
+#ifndef TWEEN_FORCE_INLINE
+#if defined(_MSC_VER)
+#define TWEEN_FORCE_INLINE __forceinline
+#elif ( (defined(__GNUC__) && (__GNUC__ >= 4)) || defined(__clang__) )
+#define TWEEN_FORCE_INLINE __attribute__((always_inline)) static __inline__
+#else
+#define TWEEN_FORCE_INLINE static TWEEN_INLINE
+#endif
+#endif
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef struct Tween_Node {
     struct Tween* tween;
@@ -42,15 +71,15 @@ typedef struct Tween_Engine {
 } Tween_Engine;
 
 typedef struct Tween_Props {
-    float x;
-    float y;
-    float width;
-    float height;
-    float rotation;
-    float r;
-    float g;
-    float b;
-    float a;
+    double x;
+    double y;
+    double width;
+    double height;
+    double rotation;
+    double r;
+    double g;
+    double b;
+    double a;
 } Tween_Props;
 
 typedef void (*Tween_Callback)(struct Tween*);
@@ -62,29 +91,29 @@ typedef struct Tween {
     uint32_t duration;
     uint32_t delay;
     int repeat;
-    bool yoyo;
+    int yoyo;
     Tween_Easing easing;
     Tween_Callback startCallback;
     Tween_Callback updateCallback;
     Tween_Callback completeCallback;
     void* data;
     uint32_t startTime;
-    bool startCallbackFired;
+    int startCallbackFired;
     Tween_Props startProps;
     Tween_Props repeatProps;
-    bool reversed;
+    int reversed;
     Tween_Node* chain;
 } Tween;
 
 Tween_Engine* Tween_CreateEngine();
-bool Tween_UpdateEngine(Tween_Engine* engine, uint32_t time);
+int Tween_UpdateEngine(Tween_Engine* engine, uint32_t time);
 void Tween_DestroyEngine(Tween_Engine* engine);
 
 Tween* Tween_CreateTween(Tween_Engine* engine, Tween_Props* props, Tween_Props* toProps, uint32_t duration, Tween_Easing easing, Tween_Callback updateCallback, void* data);
-Tween* Tween_CreateTweenEx(Tween_Engine* engine, Tween_Props* props, Tween_Props* toProps, uint32_t duration, uint32_t delay, int repeat, bool yoyo, Tween_Easing easing, Tween_Callback startCallback, Tween_Callback updateCallback, Tween_Callback completeCallback, void* data);
+Tween* Tween_CreateTweenEx(Tween_Engine* engine, Tween_Props* props, Tween_Props* toProps, uint32_t duration, uint32_t delay, int repeat, int yoyo, Tween_Easing easing, Tween_Callback startCallback, Tween_Callback updateCallback, Tween_Callback completeCallback, void* data);
 void Tween_ChainTweens(Tween* tween, Tween* tween2);
 void Tween_StartTween(Tween* tween, uint32_t time);
-bool Tween_UpdateTween(Tween* tween, uint32_t time);
+int Tween_UpdateTween(Tween* tween, uint32_t time);
 void Tween_StopTween(Tween* tween);
 void Tween_DestroyTween(Tween* tween);
 
@@ -92,7 +121,7 @@ void Tween_DestroyTween(Tween* tween);
  * Tween_MakeProps()
  */
 
-static __inline__ Tween_Props Tween_MakeProps(float x, float y, float width, float height, float rotation) {
+TWEEN_FORCE_INLINE Tween_Props Tween_MakeProps(double x, double y, double width, double height, double rotation) {
     Tween_Props props;
     props.x = x;
     props.y = y;
@@ -111,7 +140,7 @@ static __inline__ Tween_Props Tween_MakeProps(float x, float y, float width, flo
  * Tween_MakePropsEx()
  */
 
-static __inline__ Tween_Props Tween_MakePropsEx(float x, float y, float width, float height, float rotation, float r, float g, float b, float a) {
+TWEEN_FORCE_INLINE Tween_Props Tween_MakePropsEx(double x, double y, double width, double height, double rotation, double r, double g, double b, double a) {
     Tween_Props props;
     props.x = x;
     props.y = y;
@@ -130,7 +159,7 @@ static __inline__ Tween_Props Tween_MakePropsEx(float x, float y, float width, f
  * Tween_CopyProps()
  */
 
-static __inline__ void Tween_CopyProps(Tween_Props* props, Tween_Props* props2) {
+TWEEN_FORCE_INLINE void Tween_CopyProps(Tween_Props* props, Tween_Props* props2) {
     props2->x = props->x;
     props2->y = props->y;
     props2->width = props->width;
@@ -146,7 +175,7 @@ static __inline__ void Tween_CopyProps(Tween_Props* props, Tween_Props* props2) 
  * Tween_SwapProps()
  */
 
-static __inline__ void Tween_SwapProps(Tween_Props* props, Tween_Props* props2) {
+TWEEN_FORCE_INLINE void Tween_SwapProps(Tween_Props* props, Tween_Props* props2) {
     Tween_Props tempProps;
     Tween_CopyProps(props, &tempProps);
     Tween_CopyProps(props2, props);
@@ -157,7 +186,7 @@ static __inline__ void Tween_SwapProps(Tween_Props* props, Tween_Props* props2) 
  * Tween_UpdateProps()
  */
 
-static __inline__ void Tween_UpdateProps(Tween_Props* startProps, Tween_Props* toProps, Tween_Props* props, float value) {
+TWEEN_FORCE_INLINE void Tween_UpdateProps(Tween_Props* startProps, Tween_Props* toProps, Tween_Props* props, double value) {
     props->x = startProps->x + (toProps->x - startProps->x) * value;
     props->y = startProps->y + (toProps->y - startProps->y) * value;
     props->width = startProps->width + (toProps->width - startProps->width) * value;
@@ -168,5 +197,9 @@ static __inline__ void Tween_UpdateProps(Tween_Props* startProps, Tween_Props* t
     props->b = startProps->b + (toProps->b - startProps->b) * value;
     props->a = startProps->a + (toProps->a - startProps->a) * value;
 }
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

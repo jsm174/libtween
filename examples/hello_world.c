@@ -33,10 +33,12 @@ typedef struct Square {
 } Square;
 
 void update(Tween* tween) {
-    Square* square = (Square*)tween->data;
-    square->rect.x = tween->props.x;
-    square->rect.y = tween->props.y;
-    square->rotation = tween->props.rotation;
+    Square* square;
+
+    square  = (Square*)tween->data;
+    square->rect.x = (int)tween->props.x;
+    square->rect.y = (int)tween->props.y;
+    square->rotation = (int)tween->props.rotation;
 }
 
 int main(int argc, char* argv[]) {

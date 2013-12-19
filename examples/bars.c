@@ -35,13 +35,15 @@ typedef struct Bar {
     uint8_t b;
 } Bar;
 
-float rand_range(float min, float max) {
-    return min + ((float)rand() / ((float)RAND_MAX / (max - min)));
+double rand_range(double min, double max) {
+    return min + ((double)rand() / ((double)RAND_MAX / (max - min)));
 }
 
 void update(Tween* tween) {
-    Bar* bar = (Bar*)tween->data; 
-    bar->rect.x = tween->props.x;
+    Bar* bar;
+
+    bar = (Bar*)tween->data; 
+    bar->rect.x = (int)tween->props.x;
 }
 
 int main(int argc, char* argv[]) {
@@ -49,8 +51,8 @@ int main(int argc, char* argv[]) {
     SDL_Renderer* renderer;
     Tween_Engine* engine;
     int loop;
-    float startValue;
-    float endValue;
+    double startValue;
+    double endValue;
     Bar bar[1000];
     Tween_Props props;
     Tween_Props toProps;

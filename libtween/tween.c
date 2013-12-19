@@ -34,7 +34,9 @@
  */
 
 Tween_Engine* Tween_CreateEngine() {
-    Tween_Engine* engine = (Tween_Engine*) malloc(sizeof(Tween_Engine));
+    Tween_Engine* engine;
+
+    engine = (Tween_Engine*) malloc(sizeof(Tween_Engine));
     memset(engine, 0, sizeof(Tween_Engine));
     
     return engine;
@@ -45,7 +47,9 @@ Tween_Engine* Tween_CreateEngine() {
  */
 
 void Tween_DestroyEngine(Tween_Engine* engine) {
-    Tween_Node* node = engine->tweens;
+    Tween_Node* node;
+
+    node = engine->tweens;
     
     while (node) {
         Tween_Node* nextNode = node->next;
@@ -60,20 +64,22 @@ void Tween_DestroyEngine(Tween_Engine* engine) {
  * Tween_UpdateEngine()
  */
 
-bool Tween_UpdateEngine(Tween_Engine* engine, uint32_t time) {
-    if (!engine->tweens) {
-        return false;
+int Tween_UpdateEngine(Tween_Engine* engine, uint32_t time) {
+    Tween_Node* node;
+    Tween_Node* tempNode = NULL;
+
+    node = engine->tweens;
+
+    if (!node) {
+        return 0;
     }
-    
-    Tween_Node* node = engine->tweens;
-    Tween_Node* prevNode = NULL;
     
     while (node) {
         if (!Tween_UpdateTween(node->tween, time)) {
-            if (prevNode) {
-                prevNode->next = node->next;
+            if (tempNode) {
+                tempNode->next = node->next;
                 free(node);
-                node = prevNode->next;
+                node = tempNode->next;
             }
             else {
                 engine->tweens = node->next;
@@ -82,12 +88,12 @@ bool Tween_UpdateEngine(Tween_Engine* engine, uint32_t time) {
             }
         }
         else {
-            prevNode = node;
+            tempNode = node;
             node = node->next;
         }
     }
     
-    return true;
+    return 1;
 }
 
 /**
@@ -95,7 +101,9 @@ bool Tween_UpdateEngine(Tween_Engine* engine, uint32_t time) {
  */
 
 Tween* Tween_CreateTween(Tween_Engine* engine, Tween_Props* props, Tween_Props* toProps, uint32_t duration, Tween_Easing easing, Tween_Callback updateCallback, void* data) {
-    Tween* tween = (Tween*) malloc(sizeof(Tween));
+    Tween* tween;
+
+    tween = (Tween*) malloc(sizeof(Tween));
     memset(tween, 0, sizeof(Tween));
     
     tween->engine = engine;
@@ -118,8 +126,10 @@ Tween* Tween_CreateTween(Tween_Engine* engine, Tween_Props* props, Tween_Props* 
  * Tween_CreateTweenEx()
  */
 
-Tween* Tween_CreateTweenEx(Tween_Engine* engine, Tween_Props* props, Tween_Props* toProps, uint32_t duration, uint32_t delay, int repeat, bool yoyo, Tween_Easing easing, Tween_Callback startCallback, Tween_Callback updateCallback, Tween_Callback completeCallback, void* data) {
-    Tween* tween = Tween_CreateTween(engine, props, toProps, duration, easing, updateCallback, data);
+Tween* Tween_CreateTweenEx(Tween_Engine* engine, Tween_Props* props, Tween_Props* toProps, uint32_t duration, uint32_t delay, int repeat, int yoyo, Tween_Easing easing, Tween_Callback startCallback, Tween_Callback updateCallback, Tween_Callback completeCallback, void* data) {
+    Tween* tween;
+
+    tween = Tween_CreateTween(engine, props, toProps, duration, easing, updateCallback, data);
     
     tween->delay = delay;
     tween->repeat = repeat;
@@ -135,18 +145,24 @@ Tween* Tween_CreateTweenEx(Tween_Engine* engine, Tween_Props* props, Tween_Props
  */
 
 void Tween_ChainTweens(Tween* tween, Tween* tween2) {
-    Tween_Node* node = (Tween_Node*) malloc(sizeof(Tween_Node));
+    Tween_Node* node;
+    Tween_Node* tempNode;
+
+    node = (Tween_Node*) malloc(sizeof(Tween_Node));
     memset(node, 0, sizeof(Tween_Node));
+
     node->tween = tween2;
     
     if (tween->chain == NULL) {
         tween->chain = node;
     }
     else {
-        Tween_Node* tempNode = tween->chain;
+        tempNode = tween->chain;
+
         while(tempNode->next) {
             tempNode = tempNode->next;
         }
+
         tempNode->next = node;
     }
 }
@@ -156,12 +172,16 @@ void Tween_ChainTweens(Tween* tween, Tween* tween2) {
  */
 
 void Tween_DestroyTween(Tween* tween) {
-    Tween_Node* node = tween->chain;
+    Tween_Node* node;
+    Tween_Node* tempNode;
+
+    node = tween->chain;
     
     while (node) {
-        Tween_Node* nextNode = node->next;
+        tempNode = node->next;
         free(node);
-        node = nextNode;
+
+        node = tempNode;
     }
     
     free(tween);
@@ -172,23 +192,29 @@ void Tween_DestroyTween(Tween* tween) {
  */
 
 void Tween_StartTween(Tween* tween, uint32_t time) {
+    Tween_Node* node;
+    Tween_Node* tempNode;
+
     tween->startTime = time;
     tween->startTime += tween->delay;
     
     Tween_CopyProps(&tween->startProps, &tween->props);
     
-    Tween_Node* node = (Tween_Node*) malloc(sizeof(Tween_Node));
+    node = (Tween_Node*) malloc(sizeof(Tween_Node));
     memset(node, 0, sizeof(Tween_Node));
+
     node->tween = tween;
     
     if (!tween->engine->tweens) {
         tween->engine->tweens = node;
     }
     else {
-        Tween_Node* tempNode = tween->engine->tweens;
+        tempNode = tween->engine->tweens;
+
         while(tempNode->next) {
             tempNode = tempNode->next;
         }
+
         tempNode->next = node;
     }
 }
@@ -198,13 +224,15 @@ void Tween_StartTween(Tween* tween, uint32_t time) {
  */
 
 void Tween_StopTween(Tween* tween) {
-    Tween_Node* node = tween->engine->tweens;
-    Tween_Node* prevNode = NULL;
+    Tween_Node* node;
+    Tween_Node* tempNode = NULL;
+
+    node = tween->engine->tweens;
     
     while (node) {
         if (node->tween == tween) {
-            if (prevNode) {
-                prevNode->next = node->next;
+            if (tempNode) {
+                tempNode->next = node->next;
             }
             else {
                 tween->engine->tweens = node->next;
@@ -215,7 +243,7 @@ void Tween_StopTween(Tween* tween) {
             break;
         }
         else {
-            prevNode = node;
+            tempNode = node;
             node = node->next;
         }
     }
@@ -225,9 +253,12 @@ void Tween_StopTween(Tween* tween) {
  * Tween_UpdateTween()
  */
 
-bool Tween_UpdateTween(Tween* tween, uint32_t time) {
+int Tween_UpdateTween(Tween* tween, uint32_t time) {
+    double elapsed; 
+    Tween_Node* node;
+
     if (time < tween->startTime) {
-        return true;
+        return 1;
     }
     
     if (!tween->startCallbackFired) {
@@ -235,10 +266,10 @@ bool Tween_UpdateTween(Tween* tween, uint32_t time) {
             tween->startCallback(tween);
         }
         
-        tween->startCallbackFired = true;
+        tween->startCallbackFired = 1;
     }
     
-    float elapsed = (float)(time - tween->startTime) / (float)tween->duration;
+    elapsed = (double)(time - tween->startTime) / (double)tween->duration;
     elapsed = (elapsed > 1) ? 1 : elapsed;
     
     Tween_UpdateProps(&tween->startProps, &tween->toProps, &tween->props, tweenEasingFuncs[tween->easing](elapsed));
@@ -259,10 +290,10 @@ bool Tween_UpdateTween(Tween* tween, uint32_t time) {
             Tween_CopyProps(&tween->repeatProps, &tween->startProps);
             tween->startTime = time + tween->delay;
             
-            return true;
+            return 1;
         }
         else {
-            Tween_Node* node = tween->chain;
+            node = tween->chain;
             
             while (node) {
                 Tween_StartTween(node->tween, time);
@@ -273,9 +304,9 @@ bool Tween_UpdateTween(Tween* tween, uint32_t time) {
                 tween->completeCallback(tween);
             }
             
-            return false;
+            return 0;
         }
     }
     
-    return true;
+    return 1;
 }
